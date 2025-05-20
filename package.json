@@ -10,18 +10,26 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.7",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
     "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "postcss": "^8.5.3",
+    "typescript": "^5.8.3",
     "vite": "^6.3.5"
-  }
+  },
+  "packageManager": "npm@11.4.0+sha512.759091a21ee805d9c842bcfe2878d6626c48a16a5ca73c1e1338fa8379951abfc2d273ec4ad12ede64bd294237c6719b3bcc518118d1affe8a38985fe5d29773"
 }
