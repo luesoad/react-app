@@ -2,8 +2,25 @@
 
 
 @theme {
+  --tw-prose-body: #3a3042ff;
+  --color-primary: #db9d47ff;
+  --color-secondary: #ff784fff;
+  --tw-bg-base: #ffe19cff;
   --font-sans: "Inter", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
   --text-tiny: 0.625rem;
   --text-tiny--line-height: 1.5rem;
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+.text-primary {
+  color: var(--color-primary);
+}
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+.text-secondary {
+  color: var(--color-secondary);
 }

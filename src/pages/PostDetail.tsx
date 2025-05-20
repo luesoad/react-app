@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const PostDetail: React.FC = () => {
-    const { title } = useParams<{ title: string }>();
+    const { id } = useParams<{ id: string }>();
     const [post, setPost] = useState<{ title: string; body: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -13,13 +13,8 @@ const PostDetail: React.FC = () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
-                const foundPost = response.data.find((p: { title: string }) => p.title === title);
-                if (foundPost) {
-                    setPost(foundPost);
-                } else {
-                    setError('Post not found');
-                }
+                const response = await axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`);
+                setPost(response.data);
             } catch (err) {
                 setError('Error fetching post details');
             } finally {
@@ -28,7 +23,7 @@ const PostDetail: React.FC = () => {
         };
 
         fetchPostDetails();
-    }, [title]);
+    }, [id]);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;

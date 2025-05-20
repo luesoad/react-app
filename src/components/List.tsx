@@ -18,7 +18,7 @@ const List: React.FC = () => {
 
             const postsWithImages = response.data.map((post) => ({
                 ...post,
-                image: `https://picsum.photos/200/300?random=${post.id}&auto=format&fit=crop`,
+                image: `https://picsum.photos/400/600?random=${post.id}&auto=format&fit=crop`,
             }));
             setPosts(postsWithImages);
             setShowPosts(true);
@@ -50,7 +50,7 @@ const List: React.FC = () => {
         <div className='mt-4'>
             <button
                 onClick={handleButtonClick}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full cursor-pointer"
+                className="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-full cursor-pointer"
             >
                 {showPosts ? 'Hide Posts' : 'Load Posts'}
             </button>
@@ -64,7 +64,7 @@ const List: React.FC = () => {
                     {visibleCount < posts.length && (
                         <button
                             onClick={loadMorePosts}
-                            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full cursor-pointer"
+                            className="mt-4 bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-full cursor-pointer"
                         >
                             Load More
                         </button>

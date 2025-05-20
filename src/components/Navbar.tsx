@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
         <nav className="bg-white border-b shadow">
             <div className="max-w-screen-lg mx-auto px-4 flex items-center justify-between h-16">
                 <div className="flex items-center">
-                    <Link to="/" className="text-xl font-bold text-sky-600 cursor-pointer">
+                    <Link to="/" className="text-xl font-bold text-secondary cursor-pointer">
                         React App
                     </Link>
                 </div>
@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
                         <Link
                             key={link.label}
                             to={link.href}
-                            className="text-gray-600 hover:text-sky-600 font-medium"
+                            className="text-gray-600 hover:text-secondary font-medium"
                         >
                             {link.label}
                         </Link>
