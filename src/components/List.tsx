@@ -15,7 +15,12 @@ const List: React.FC = () => {
         setError(null);
         try {
             const response = await axios.get<Post[]>('https://jsonplaceholder.typicode.com/posts');
-            setPosts(response.data);
+
+            const postsWithImages = response.data.map((post) => ({
+                ...post,
+                image: `https://picsum.photos/200/300?random=${post.id}&auto=format&fit=crop`,
+            }));
+            setPosts(postsWithImages);
             setShowPosts(true);
             setVisibleCount(10);
         } catch (err) {
@@ -53,7 +58,7 @@ const List: React.FC = () => {
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {posts.slice(0, visibleCount).map(post => (
-                            <ListItem key={post.id} {...post} />
+                            <ListItem key={post.id} {...post} image={post.image} />
                         ))}
                     </div>
                     {visibleCount < posts.length && (
