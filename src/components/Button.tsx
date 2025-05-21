@@ -1,35 +1,38 @@
 import React from 'react';
+import LoadingSpinner from '../assets/icons/loading-spinner.svg';
 
 interface ButtonProps {
     onClick: () => void;
-    variant?: 'primary' | 'secondary'; // variant ist jetzt optional
+    variant?: 'primary' | 'secondary';
+    className?: string;
+    loading?: boolean;
     children: React.ReactNode;
-    disabled?: boolean;
-    className?: string; // Neue Prop für zusätzliche Klassen
-    type?: 'button' | 'submit' | 'reset'; // Neue Prop für den Button-Typ
+    type?: 'button' | 'submit' | 'reset';
 }
 
 const Button: React.FC<ButtonProps> = ({
     onClick,
     variant = 'primary',
-    children,
-    disabled,
     className,
+    loading,
+    children,
     type = 'button',
 }) => {
-    const baseClasses = 'inline-flex rounded-md px-4 py-2 text-center font-sans text-sm font-medium transition-all duration-300 ease-in';
-    const variantClasses = variant === 'primary'
-        ? 'bg-primary text-slate-50 hover:bg-slate-700'
-        : 'bg-secondary text-slate-50 hover:bg-slate-700';
-
     return (
         <button
             onClick={onClick}
+            disabled={loading}
             type={type}
-            className={`${baseClasses} ${variantClasses} ${className} ${disabled ? 'disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none' : ''}`}
-            disabled={disabled}
+            className={`${loading ? '' : 'cursor-pointer'} ${variant === 'primary' ? 'bg-primary hover:bg-secondary text-white' : 'bg-secondary hover:bg-primary text-white'} focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 inline-flex items-center ${className}`}
         >
-            {children}
+            {loading ? (
+                <>
+                    <img src={LoadingSpinner} alt="Loading..." className="inline w-4 h-4 me-3" />
+                    Loading...
+                </>
+            ) : (
+                children
+            )}
         </button>
     );
 };

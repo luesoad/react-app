@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import List from './../components/List';
 import Button from './../components/Button';
+import useLoading from './../hooks/useLoading';
 
 const Home: React.FC = () => {
     const [showPosts, setShowPosts] = useState(false);
-
+    const { loading, executeWithLoading } = useLoading();
     const handleButtonClick = () => {
-        setShowPosts(prev => !prev);
+        executeWithLoading(async () => {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            setShowPosts(prev => !prev);
+        });
     };
 
     return (
@@ -16,6 +20,7 @@ const Home: React.FC = () => {
                 onClick={handleButtonClick}
                 variant="primary"
                 className="font-bold py-2 px-4 rounded-full cursor-pointer"
+                loading={loading}
             >
                 {showPosts ? 'Hide Posts' : 'Load Posts'}
             </Button>

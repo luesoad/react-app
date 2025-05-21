@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Post } from '../types/Post';
 import ListItem from './ListItem';
 import Button from './Button';
+import useLoading from './../hooks/useLoading';
 
 interface ListProps {
     showPosts: boolean;
@@ -10,11 +11,11 @@ interface ListProps {
 
 const List: React.FC<ListProps> = ({ showPosts }) => {
     const [posts, setPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [visibleCount, setVisibleCount] = useState(10);
     const postsApiUrl = 'https://jsonplaceholder.typicode.com/posts';
     const postApiImageUrl = 'https://picsum.photos/400/600?random=';
+    const { loading, executeWithLoading } = useLoading();
 
     useEffect(() => {
         if (showPosts) {
@@ -26,7 +27,6 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
     }, [showPosts]);
 
     const fetchPosts = async () => {
-        setLoading(true);
         setError(null);
         try {
             const response = await axios.get<Post[]>(postsApiUrl);
@@ -38,13 +38,17 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
             setPosts(postsWithImages);
         } catch (err) {
             setError('Error fetching data');
-        } finally {
-            setLoading(false);
         }
     };
 
-    const loadMorePosts = () => {
-        setVisibleCount(prevCount => prevCount + 10);
+    const loadMorePosts = async () => {
+        return new Promise<void>((resolve) => {
+            setVisibleCount(prevCount => {
+                const newCount = prevCount + 10;
+                resolve();
+                return newCount;
+            });
+        });
     };
 
     if (loading) return <div>Loading...</div>;
@@ -60,7 +64,11 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
                         ))}
                     </div>
                     {visibleCount < posts.length && (
-                        <Button onClick={loadMorePosts} variant="primary">
+                        <Button
+                            onClick={() => executeWithLoading(loadMorePosts)}
+                            variant="primary"
+                            loading={loading}
+                        >
                             Load More
                         </Button>
                     )}
