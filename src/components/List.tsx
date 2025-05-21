@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Post } from '../types/Post';
 import ListItem from './ListItem';
+import Button from './Button';
 
 interface ListProps {
     showPosts: boolean;
@@ -12,6 +13,8 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [visibleCount, setVisibleCount] = useState(10);
+    const postsApiUrl = 'https://jsonplaceholder.typicode.com/posts';
+    const postApiImageUrl = 'https://picsum.photos/400/600?random=';
 
     useEffect(() => {
         if (showPosts) {
@@ -26,11 +29,11 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get<Post[]>('https://jsonplaceholder.typicode.com/posts');
+            const response = await axios.get<Post[]>(postsApiUrl);
 
             const postsWithImages = response.data.map((post) => ({
                 ...post,
-                image: `https://picsum.photos/400/600?random=${post.id}&auto=format&fit=crop`,
+                image: `${postApiImageUrl}${post.id}&auto=format&fit=crop`,
             }));
             setPosts(postsWithImages);
         } catch (err) {
@@ -57,12 +60,9 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
                         ))}
                     </div>
                     {visibleCount < posts.length && (
-                        <button
-                            onClick={loadMorePosts}
-                            className="mt-4 bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-full cursor-pointer"
-                        >
+                        <Button onClick={loadMorePosts} variant="primary">
                             Load More
-                        </button>
+                        </Button>
                     )}
                 </>
             )}

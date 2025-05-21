@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Button from './Button';
 
 const navLinks = [
     { label: "Home", href: "/" },
@@ -35,30 +36,28 @@ const Navbar: React.FC = () => {
                     ))}
                 </div>
                 <div className="md:hidden">
-                    <button
-                        type="button"
+                    <Button
                         onClick={toggleMenu}
                         className="text-sky-600 hover:text-sky-800 focus:outline-none cursor-pointer"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
-                    </button>
+                    </Button>
                 </div>
             </div>
             {isOpen && (
                 <div className="fixed inset-0 bg-white z-50 flex flex-col justify-start items-start p-4">
                     <div className="flex justify-between items-center w-full">
                         <h2 className="text-lg font-bold">Menu</h2>
-                        <button
-                            type="button"
+                        <Button
                             onClick={() => setIsOpen(false)}
                             className="text-sky-600 hover:text-sky-800 focus:outline-none cursor-pointer"
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
-                        </button>
+                        </Button>
                     </div>
                     <div className="flex flex-col space-y-4 w-full mt-4">
                         {navLinks.map((link) => (
