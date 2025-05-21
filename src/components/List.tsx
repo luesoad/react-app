@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Post } from '../types/Post';
 import ListItem from './ListItem';
 
-const List: React.FC = () => {
+interface ListProps {
+    showPosts: boolean;
+}
+
+const List: React.FC<ListProps> = ({ showPosts }) => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [showPosts, setShowPosts] = useState(false);
     const [visibleCount, setVisibleCount] = useState(10);
+
+    useEffect(() => {
+        if (showPosts) {
+            fetchPosts();
+        } else {
+            setPosts([]);
+            setVisibleCount(10);
+        }
+    }, [showPosts]);
 
     const fetchPosts = async () => {
         setLoading(true);
@@ -21,21 +33,10 @@ const List: React.FC = () => {
                 image: `https://picsum.photos/400/600?random=${post.id}&auto=format&fit=crop`,
             }));
             setPosts(postsWithImages);
-            setShowPosts(true);
-            setVisibleCount(10);
         } catch (err) {
             setError('Error fetching data');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleButtonClick = () => {
-        if (showPosts) {
-            setShowPosts(false);
-            setPosts([]);
-        } else {
-            fetchPosts();
         }
     };
 
@@ -48,12 +49,6 @@ const List: React.FC = () => {
 
     return (
         <div className='mt-4'>
-            <button
-                onClick={handleButtonClick}
-                className="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-full cursor-pointer"
-            >
-                {showPosts ? 'Hide Posts' : 'Load Posts'}
-            </button>
             {showPosts && (
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
