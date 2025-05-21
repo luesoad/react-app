@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { postApiImageUrl, postApiUrl } from '../utils/constants';
 
 const PostDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -13,7 +14,7 @@ const PostDetail: React.FC = () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`);
+                const response = await axios.get(`${postApiUrl}${id}`);
                 setPost(response.data);
             } catch (err) {
                 setError('Error fetching post details');
@@ -32,6 +33,12 @@ const PostDetail: React.FC = () => {
         <div className="max-w-screen-md mx-auto px-4 mt-4">
             {post && (
                 <>
+
+                    <img
+                        src={`${postApiImageUrl}${id}`}
+                        className="w-full h-64 object-cover mb-4"
+                        alt={post.title}
+                    />
                     <h1 className="text-3xl font-bold">{post.title}</h1>
                     <p className="mt-4 text-gray-700">{post.body}</p>
                 </>

@@ -4,6 +4,8 @@ import { Post } from '../types/Post';
 import ListItem from './ListItem';
 import Button from './Button';
 import useLoading from './../hooks/useLoading';
+import { postApiImageUrl, postApiUrl } from '../utils/constants';
+
 
 interface ListProps {
     showPosts: boolean;
@@ -13,8 +15,6 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [visibleCount, setVisibleCount] = useState(10);
-    const postsApiUrl = 'https://jsonplaceholder.typicode.com/posts';
-    const postApiImageUrl = 'https://picsum.photos/400/600?random=';
     const { loading, executeWithLoading } = useLoading();
 
     useEffect(() => {
@@ -29,11 +29,11 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
     const fetchPosts = async () => {
         setError(null);
         try {
-            const response = await axios.get<Post[]>(postsApiUrl);
+            const response = await axios.get<Post[]>(`${postApiUrl}`);
 
             const postsWithImages = response.data.map((post) => ({
                 ...post,
-                image: `${postApiImageUrl}${post.id}&auto=format&fit=crop`,
+                image: `${postApiImageUrl}${post.id}`,
             }));
             setPosts(postsWithImages);
         } catch (err) {
