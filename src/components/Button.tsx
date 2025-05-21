@@ -1,14 +1,7 @@
 import React from 'react';
+import { ButtonProps } from '../types/Button';
 import LoadingSpinner from '../assets/icons/loading-spinner.svg';
 
-interface ButtonProps {
-    onClick: () => void;
-    variant?: 'primary' | 'secondary';
-    className?: string;
-    loading?: boolean;
-    children: React.ReactNode;
-    type?: 'button' | 'submit' | 'reset';
-}
 
 const Button: React.FC<ButtonProps> = ({
     onClick,
@@ -23,7 +16,12 @@ const Button: React.FC<ButtonProps> = ({
             onClick={onClick}
             disabled={loading}
             type={type}
-            className={`${loading ? '' : 'cursor-pointer'} ${variant === 'primary' ? 'bg-primary hover:bg-secondary text-white' : 'bg-secondary hover:bg-primary text-white'} focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 inline-flex items-center ${className}`}
+            className={`${loading ? '' : 'cursor-pointer'} 
+        ${variant === 'primary' ?
+                    'bg-primary hover:bg-primary-dark focus:ring-4 focus:ring-primary-light text-white' :
+                    'bg-secondary hover:bg-secondary-dark focus:ring-4 focus:ring-secondary-light text-white'} 
+        focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 inline-flex items-center 
+        ${loading ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         >
             {loading ? (
                 <>
@@ -34,6 +32,7 @@ const Button: React.FC<ButtonProps> = ({
                 children
             )}
         </button>
+
     );
 };
 

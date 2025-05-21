@@ -1,6 +1,6 @@
 # Project
 
-Very basic React project.
+Very basic dummy React project.
 
 
 # React + Vite
