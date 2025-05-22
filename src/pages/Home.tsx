@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import List from './../components/List';
 import Button from './../components/Button';
 import useLoading from './../hooks/useLoading';
+import PageContainer from './../components/PageContainer';
 
 const Home: React.FC = () => {
     const [showPosts, setShowPosts] = useState(false);
@@ -15,17 +16,16 @@ const Home: React.FC = () => {
     };
 
     return (
-        <div className="max-w-screen-md mx-auto px-4 mt-10 bg-[color:var(--peach-yellow)] min-h-[80vh] flex flex-col justify-center">
-            {/* Hero/Intro Card */}
+        <PageContainer>
             <div
                 className="
-          bg-[color:var(--nyanza)]/80
-          rounded-2xl
-          shadow-2xl
-          p-10
-          flex flex-col items-center mb-8
-          backdrop-blur-sm
-        "
+                    bg-[color:var(--nyanza)]/80
+                    rounded-2xl
+                    shadow-2xl
+                    p-10
+                    flex flex-col items-center mb-8
+                    backdrop-blur-sm
+                "
             >
                 <h1 className="text-4xl font-extrabold text-[color:var(--dark-purple)] mb-3 text-center">
                     Welcome to this React playground!
@@ -44,11 +44,10 @@ const Home: React.FC = () => {
                 </Button>
             </div>
 
-            {/* Posts List */}
             <div className="mt-6">
                 <List showPosts={showPosts} />
             </div>
-        </div>
+        </PageContainer>
     );
 };
 
