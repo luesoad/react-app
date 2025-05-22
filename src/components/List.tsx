@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Post } from '../types/Post';
 import ListItem from './Card';
+import Button from './Button';
 import useLoading from './../hooks/useLoading';
 import { postApiImageUrl, postApiUrl } from '../utils/constants';
 import * as Progress from '@radix-ui/react-progress';
@@ -92,24 +93,27 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
         <div className="mt-8">
             {showPosts && (
                 <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 p-4 w-full">
-                        {posts.slice(0, visibleCount).map(post => (
-                            <ListItem key={post.id} {...post} image={post.image} />
-                        ))}
-                        {visibleCount < posts.length && (
-                            <div ref={loadMoreRef} />
-                        )}
+                    <div className="card-grid-container">
+                        <div className="card-grid">
+                            {posts.slice(0, visibleCount).map(post => (
+                                <ListItem key={post.id} {...post} image={post.image} />
+                            ))}
+                            {visibleCount < posts.length && (
+                                <div ref={loadMoreRef} />
+                            )}
+                        </div>
                     </div>
 
                     {visibleCount < posts.length && !loading && (
                         <div className="flex justify-center mt-4">
-                            <button
+                            <Button
                                 onClick={() => executeWithLoading(loadMorePosts)}
-                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                variant="secondary"
                                 disabled={loading}
+                                loading={loading}
                             >
                                 Load More
-                            </button>
+                            </Button>
                         </div>
                     )}
                 </>

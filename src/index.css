@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "@radix-ui/themes/styles.css";
-@import '../styles/button.scss';
 
 :root {
   --primary: #db9d47;
