@@ -1,6 +1,6 @@
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  onClick: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   variant?: "primary" | "secondary";
   className?: string;
   loading?: boolean;
