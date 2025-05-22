@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Post } from '../types/Post';
 import ListItem from './Card';
-import Button from './Button';
 import useLoading from './../hooks/useLoading';
 import { postApiImageUrl, postApiUrl } from '../utils/constants';
+import * as Progress from '@radix-ui/react-progress';
 
 interface ListProps {
     showPosts: boolean;
@@ -24,16 +24,16 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
             setPosts([]);
             setVisibleCount(10);
         }
-        // eslint-disable-next-line
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showPosts]);
 
     const fetchPosts = async () => {
         setError(null);
         try {
-            const response = await axios.get<Post[]>(`${postApiUrl}`);
-            const postsWithImages = response.data.map((post) => ({
+            const response = await axios.get<Post[]>(postApiUrl);
+            const postsWithImages = response.data.map(post => ({
                 ...post,
-                image: `${postApiImageUrl}${post.id}`,
+                image: `${postApiImageUrl}${post.id}`
             }));
             setPosts(postsWithImages);
         } catch (err) {
@@ -41,52 +41,46 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
         }
     };
 
-    // Funktion zum Laden weiterer Cards
     const loadMorePosts = async () => {
-        return new Promise<void>((resolve) => {
-            setVisibleCount(prevCount => {
-                const newCount = prevCount + 10;
+        return new Promise<void>(resolve => {
+            setVisibleCount(prev => {
+                const next = prev + 10;
                 resolve();
-                return newCount;
+                return next;
             });
         });
     };
 
-    // Intersection Observer für Auto-Loading beim Scrollen
     useEffect(() => {
         if (!showPosts) return;
 
-        const observer = new window.IntersectionObserver(
-            (entries) => {
+        const observer = new IntersectionObserver(
+            entries => {
                 if (entries[0].isIntersecting && visibleCount < posts.length && !loading) {
                     executeWithLoading(loadMorePosts);
                 }
             },
-            {
-                root: null,
-                rootMargin: '0px',
-                threshold: 1.0,
-            }
+            { root: null, rootMargin: '0px', threshold: 1.0 }
         );
 
-        if (loadMoreRef.current) {
-            observer.observe(loadMoreRef.current);
-        }
-
+        if (loadMoreRef.current) observer.observe(loadMoreRef.current);
         return () => {
-            if (loadMoreRef.current) {
-                observer.unobserve(loadMoreRef.current);
-            }
+            if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
         };
-        // eslint-disable-next-line
-    }, [visibleCount, posts.length, loading, showPosts]);
+    }, [visibleCount, posts.length, loading, showPosts, executeWithLoading]);
 
     if (loading && visibleCount === 10)
         return (
-            <div className="flex justify-center items-center py-8">
-                <span className="text-lg text-[color:var(--primary)] font-semibold animate-pulse">Loading...</span>
+            <div className="p-4">
+                <Progress.Root className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <Progress.Indicator
+                        className="h-full transition-all"
+                        style={{ width: '100%' }}
+                    />
+                </Progress.Root>
             </div>
         );
+
     if (error)
         return (
             <div className="flex justify-center items-center py-8">
@@ -98,16 +92,24 @@ const List: React.FC<ListProps> = ({ showPosts }) => {
         <div className="mt-8">
             {showPosts && (
                 <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 p-4 w-full">
                         {posts.slice(0, visibleCount).map(post => (
                             <ListItem key={post.id} {...post} image={post.image} />
                         ))}
+                        {visibleCount < posts.length && (
+                            <div ref={loadMoreRef} />
+                        )}
                     </div>
-                    {visibleCount < posts.length && (
-                        <div ref={loadMoreRef} className="flex justify-center mt-8">
-                            <Button variant="primary" loading={loading}>
-                                Loading more...
-                            </Button>
+
+                    {visibleCount < posts.length && !loading && (
+                        <div className="flex justify-center mt-4">
+                            <button
+                                onClick={() => executeWithLoading(loadMorePosts)}
+                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                disabled={loading}
+                            >
+                                Load More
+                            </button>
                         </div>
                     )}
                 </>

@@ -2,6 +2,11 @@
 
 Very basic dummy React project.
 
+#To do
+- test shadcn/ui 
+- test radix ui
+- add more storybook stories
+
 
 # React + Vite
 

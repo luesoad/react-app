@@ -1,6 +1,8 @@
 @import "tailwindcss";
+@import "@radix-ui/themes/styles.css";
+@import '../styles/button.scss';
 
-@theme {
+:root {
   --primary: #db9d47;
   --primary-dark: #b78a3c;
   --secondary: #ff784f;
@@ -13,6 +15,9 @@
   --coral: #ff784f;
   --peach-yellow: #ffe19c;
   --nyanza: #edffd9;
+  --button-text: #fff;
+  --button-box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --button-box-shadow-focus: 0 0 0 4px var(--primary-light);
 }
 
 .opacity-50 {
