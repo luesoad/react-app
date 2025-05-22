@@ -12,24 +12,46 @@ const navLinks = [
 const Navbar: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    };
+    const toggleMenu = () => setIsOpen(!isOpen);
 
     return (
-        <nav className="bg-white border-b shadow">
+        <nav
+            className="
+        bg-[color:var(--dark-purple)]
+        shadow-lg
+        border-b-2 border-[color:var(--primary)]
+        sticky top-0 z-40
+      "
+            style={{ boxShadow: '0 4px 24px 0 rgba(58,48,66,0.12), 0 1.5px 4px 0 rgba(219,157,71,0.08)' }}
+        >
             <div className="max-w-screen-lg mx-auto px-4 flex items-center justify-between h-16">
                 <div className="flex items-center">
-                    <Link to="/" className="text-xl font-bold text-secondary cursor-pointer">
+                    <Link
+                        to="/"
+                        className="
+              text-2xl font-extrabold tracking-tight
+              text-[color:var(--earth-yellow)]
+              hover:text-[color:var(--coral)]
+              transition-colors duration-200
+              cursor-pointer
+            "
+                    >
                         React App
                     </Link>
                 </div>
-                <div className="hidden md:flex space-x-6">
+                <div className="hidden md:flex space-x-8">
                     {navLinks.map((link) => (
                         <Link
                             key={link.label}
                             to={link.href}
-                            className="text-gray-600 hover:text-secondary font-medium"
+                            className="
+                text-base font-medium
+                text-[color:var(--nyanza)]
+                hover:text-[color:var(--coral)]
+                px-3 py-2 rounded-md
+                transition-all duration-200
+                hover:bg-[color:var(--peach-yellow)/.2]
+              "
                         >
                             {link.label}
                         </Link>
@@ -38,33 +60,57 @@ const Navbar: React.FC = () => {
                 <div className="md:hidden">
                     <Button
                         onClick={toggleMenu}
-                        className="text-sky-600 hover:text-sky-800 focus:outline-none cursor-pointer"
+                        className="
+              text-[color:var(--earth-yellow)]
+              hover:text-[color:var(--coral)]
+              bg-transparent p-2 rounded
+              focus:outline-none
+            "
+                        aria-label="Open menu"
                     >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </Button>
                 </div>
             </div>
             {isOpen && (
-                <div className="fixed inset-0 bg-white z-50 flex flex-col justify-start items-start p-4">
-                    <div className="flex justify-between items-center w-full">
-                        <h2 className="text-lg font-bold">Menu</h2>
+                <div className="
+          fixed inset-0 z-50 bg-[color:var(--dark-purple)]/95
+          flex flex-col justify-start items-start p-6
+          animate-fade-in
+        ">
+                    <div className="flex justify-between items-center w-full mb-6">
+                        <h2 className="text-xl font-bold text-[color:var(--earth-yellow)]">Menu</h2>
                         <Button
                             onClick={() => setIsOpen(false)}
-                            className="text-sky-600 hover:text-sky-800 focus:outline-none cursor-pointer"
+                            className="
+                text-[color:var(--earth-yellow)]
+                hover:text-[color:var(--coral)]
+                bg-transparent p-2 rounded
+                focus:outline-none
+              "
+                            aria-label="Close menu"
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                            <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </Button>
                     </div>
-                    <div className="flex flex-col space-y-4 w-full mt-4">
+                    <div className="flex flex-col space-y-6 w-full">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.label}
                                 to={link.href}
-                                className="text-gray-600 hover:text-sky-600 font-medium text-lg"
+                                className="
+                  text-lg font-semibold
+                  text-[color:var(--nyanza)]
+                  hover:text-[color:var(--coral)]
+                  px-3 py-2 rounded-md
+                  transition-all duration-200
+                  hover:bg-[color:var(--peach-yellow)/.2]
+                  w-full
+                "
                                 onClick={() => setIsOpen(false)}
                             >
                                 {link.label}
