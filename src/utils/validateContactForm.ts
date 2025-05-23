@@ -1,5 +1,4 @@
-import { ContactFormValues } from "../types/Form";
-import { FormErrors } from "../types/form";
+import { ContactFormValues, FormErrors } from "../types/form";
 
 export function validateContactForm(
   values: ContactFormValues

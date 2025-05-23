@@ -1,39 +1,89 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useRef, useEffect } from "react";
 import { Box, Text } from "@radix-ui/themes";
 import Button from "./Button";
 import InputField from "./form/InputField";
 import TextareaField from "./form/TextareaField";
 import { ContactFormValues, FormErrors } from "../types/form";
 import { validateContactForm } from "../utils/validateContactForm";
+import contactFormInitialValues from "../utils/constants"
+import { sendContactForm } from "../utils/sendContactForm";
 
-const initialValues: ContactFormValues = {
-    name: "",
-    email: "",
-    message: "",
-};
+const MESSAGE_MAX = 500;
 
-const ContactForm: React.FC = () => {
-    const [values, setValues] = useState<ContactFormValues>(initialValues);
+const ContactForm: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+    const [values, setValues] = useState<ContactFormValues>(contactFormInitialValues);
     const [errors, setErrors] = useState<FormErrors<ContactFormValues>>({});
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [backendError, setBackendError] = useState<string | null>(null);
+    const [backendFieldErrors, setBackendFieldErrors] = useState<FormErrors<ContactFormValues>>({});
+    const firstErrorRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+
+    useEffect(() => {
+        if (Object.keys(errors).length > 0 && firstErrorRef.current) {
+            firstErrorRef.current.focus();
+        }
+    }, [errors]);
+
+    useEffect(() => {
+        if (!onClose) return;
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+        };
+        window.addEventListener("keydown", handleEsc);
+        return () => window.removeEventListener("keydown", handleEsc);
+    }, [onClose]);
+
+    const isFormValid = () => {
+        const validationErrors = validateContactForm(values);
+        return Object.keys(validationErrors).length === 0;
+    };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setValues((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: undefined }));
+        setBackendFieldErrors((prev) => ({ ...prev, [name]: undefined }));
+        setBackendError(null);
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setBackendError(null);
+        setBackendFieldErrors({});
         const validationErrors = validateContactForm(values);
         setErrors(validationErrors);
-        if (Object.keys(validationErrors).length > 0) return;
+
+        if (Object.keys(validationErrors).length > 0) {
+            return;
+        }
+
         setLoading(true);
-        setTimeout(() => {
+
+        try {
+            await sendContactForm(values);
             setSubmitted(true);
+        } catch (err: any) {
             setLoading(false);
-        }, 1200);
+            if (err.fieldErrors) {
+                setBackendFieldErrors(err.fieldErrors);
+                setErrors((prev) => ({ ...prev, ...err.fieldErrors }));
+                if (firstErrorRef.current) firstErrorRef.current.focus();
+            }
+            setBackendError(err.message || "An error occurred. Please try again.");
+            return;
+        }
+        setLoading(false);
+    };
+
+    const getFieldRef = (field: keyof ContactFormValues) => {
+        if (
+            (errors[field] || backendFieldErrors[field]) &&
+            !firstErrorRef.current
+        ) {
+            return firstErrorRef;
+        }
+        return undefined;
     };
 
     return (
@@ -43,15 +93,15 @@ const ContactForm: React.FC = () => {
                 background: "var(--nyanza)",
                 boxShadow: "0 2px 16px 0 rgba(0,0,0,0.10)",
             }}
+            aria-live="polite"
         >
             {submitted ? (
-                <div className="flex flex-col py-16">
+                <div className="text-center py-16 flex flex-col" role="status">
                     <Text
                         as="h2"
                         size="5"
                         weight="bold"
                         style={{ color: "var(--dark-purple)" }}
-
                     >
                         Thank you!
                     </Text>
@@ -80,7 +130,12 @@ const ContactForm: React.FC = () => {
                             required
                             value={values.name}
                             onChange={handleChange}
-                            error={errors.name}
+                            error={errors.name || backendFieldErrors.name}
+                            aria-invalid={!!(errors.name || backendFieldErrors.name)}
+                            aria-describedby={errors.name || backendFieldErrors.name ? "name-error" : undefined}
+                            tabIndex={1}
+                            ref={getFieldRef("name")}
+                            autoFocus
                         />
                         <InputField
                             id="email"
@@ -90,7 +145,11 @@ const ContactForm: React.FC = () => {
                             required
                             value={values.email}
                             onChange={handleChange}
-                            error={errors.email}
+                            error={errors.email || backendFieldErrors.email}
+                            aria-invalid={!!(errors.email || backendFieldErrors.email)}
+                            aria-describedby={errors.email || backendFieldErrors.email ? "email-error" : undefined}
+                            tabIndex={2}
+                            ref={getFieldRef("email")}
                         />
                         <TextareaField
                             id="message"
@@ -99,9 +158,33 @@ const ContactForm: React.FC = () => {
                             required
                             value={values.message}
                             onChange={handleChange}
-                            error={errors.message}
+                            error={errors.message || backendFieldErrors.message}
+                            aria-invalid={!!(errors.message || backendFieldErrors.message)}
+                            aria-describedby={errors.message || backendFieldErrors.message ? "message-error" : undefined}
+                            tabIndex={3}
+                            ref={getFieldRef("message")}
+                            maxLength={MESSAGE_MAX}
+                            characterCount
                         />
-                        <Button type="submit" variant="primary" loading={loading} className="w-full">
+                        <div className="mb-4">
+                            {backendError && (
+                                <div
+                                    className="text-red-600 text-sm mb-2"
+                                    role="alert"
+                                    aria-live="assertive"
+                                >
+                                    {backendError}
+                                </div>
+                            )}
+                        </div>
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            loading={loading}
+                            className="w-full"
+                            tabIndex={4}
+                            disabled={!isFormValid() || loading}
+                        >
                             Send Message
                         </Button>
                     </form>
