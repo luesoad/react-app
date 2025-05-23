@@ -1,29 +1,38 @@
-import React, { useState, ChangeEvent, FormEvent, useRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Box, Text } from "@radix-ui/themes";
 import Button from "./Button";
 import InputField from "./form/InputField";
 import TextareaField from "./form/TextareaField";
-import { ContactFormValues, FormErrors } from "../types/form";
+import { ContactFormValues } from "../types/form";
 import { validateContactForm } from "../utils/validateContactForm";
-import contactFormInitialValues from "../utils/constants"
+import contactFormInitialValues from "../utils/constants";
 import { sendContactForm } from "../utils/sendContactForm";
+import { useForm } from "../hooks/useForm";
 
 const MESSAGE_MAX = 500;
 
 const ContactForm: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
-    const [values, setValues] = useState<ContactFormValues>(contactFormInitialValues);
-    const [errors, setErrors] = useState<FormErrors<ContactFormValues>>({});
-    const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [backendError, setBackendError] = useState<string | null>(null);
-    const [backendFieldErrors, setBackendFieldErrors] = useState<FormErrors<ContactFormValues>>({});
-    const firstErrorRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+    const {
+        values,
+        errors,
+        backendError,
+        backendFieldErrors,
+        loading,
+        submitted,
+        handleChange,
+        handleSubmit,
+        firstErrorRef,
+    } = useForm<ContactFormValues>({
+        initialValues: contactFormInitialValues,
+        validate: validateContactForm,
+        onSubmit: sendContactForm,
+    });
 
     useEffect(() => {
         if (Object.keys(errors).length > 0 && firstErrorRef.current) {
             firstErrorRef.current.focus();
         }
-    }, [errors]);
+    }, [errors, firstErrorRef]);
 
     useEffect(() => {
         if (!onClose) return;
@@ -34,47 +43,7 @@ const ContactForm: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         return () => window.removeEventListener("keydown", handleEsc);
     }, [onClose]);
 
-    const isFormValid = () => {
-        const validationErrors = validateContactForm(values);
-        return Object.keys(validationErrors).length === 0;
-    };
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setValues((prev) => ({ ...prev, [name]: value }));
-        setErrors((prev) => ({ ...prev, [name]: undefined }));
-        setBackendFieldErrors((prev) => ({ ...prev, [name]: undefined }));
-        setBackendError(null);
-    };
-
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setBackendError(null);
-        setBackendFieldErrors({});
-        const validationErrors = validateContactForm(values);
-        setErrors(validationErrors);
-
-        if (Object.keys(validationErrors).length > 0) {
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            await sendContactForm(values);
-            setSubmitted(true);
-        } catch (err: any) {
-            setLoading(false);
-            if (err.fieldErrors) {
-                setBackendFieldErrors(err.fieldErrors);
-                setErrors((prev) => ({ ...prev, ...err.fieldErrors }));
-                if (firstErrorRef.current) firstErrorRef.current.focus();
-            }
-            setBackendError(err.message || "An error occurred. Please try again.");
-            return;
-        }
-        setLoading(false);
-    };
+    const isFormValid = () => Object.keys(errors).length === 0;
 
     const getFieldRef = (field: keyof ContactFormValues) => {
         if (
@@ -102,6 +71,7 @@ const ContactForm: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
                         size="5"
                         weight="bold"
                         style={{ color: "var(--dark-purple)" }}
+                        className="mb-4"
                     >
                         Thank you!
                     </Text>
